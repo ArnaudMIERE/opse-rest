@@ -1,0 +1,1 @@
+scp -P 2222 ./target/sedoo-openopse-rest-0.0.1-SNAPSHOT.jar  wwwadm@sedur.sedoo.fr:/data2/opse-prod/services/opse-prod.jar
