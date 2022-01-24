@@ -9,6 +9,8 @@ server:
 logging:
    file: ../logs/opse-prod.log
    
+catalogue.url: https://services.aeris-data.fr/theiacatalogueprod/metadata/
+   
         
 metadataService:    
     url: https://services.aeris-data.fr/theiacatalogueprod/metadata/
@@ -91,7 +93,7 @@ spring:
    
 openOpse:
     data: /home/amiere/Documents/data/
-    depot: /home/amiere/Documents/depot
+    depot: /home/amiere/Documents/depot/
 local:
     baseFolder: /home/amiere/Documents/tmp
 
