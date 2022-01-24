@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StreamUtils;
 
 import javax.ws.rs.core.MediaType;
@@ -39,11 +41,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.zeroturnaround.zip.ZipUtil;
 
 import com.google.common.base.Strings;
 
 import fr.sedoo.openopse.rest.domain.DomainFilter;
+import fr.sedoo.commons.util.StringUtil;
 import fr.sedoo.openopse.rest.config.ApplicationConfig;
 import fr.sedoo.openopse.rest.dao.FileUtils;
 import fr.sedoo.openopse.rest.domain.FileInfo;
@@ -54,7 +58,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
-@RequestMapping(value = "/data")
+@RequestMapping(value = "/data/v1_0")
 public class OpseDataService {
 
 
@@ -95,12 +99,12 @@ public class OpseDataService {
 		return "dataset-" + id + ".zip";
 	}
 	
-	private List<String> getFileNameFromUuidAndYear(String collection, String filter) throws IOException {
+	private List<String> getFileNameFromUuidAndYear(String collection, String filter, String folder) throws IOException {
 		DomainFilter domain = new DomainFilter(filter);
 		LOG.info("YEARS "+domain.getYears());
 		String folderName = config.getOpenOpseFolderName();
 		File workDirectory = new File(folderName);
-		File resource = new File(workDirectory, collection+"/netcdf");
+		File resource = new File(workDirectory, collection+folder);
 		LOG.info("Path "+resource.getAbsolutePath());
 		List<String> currentFile = new ArrayList<>();
 		File [] listOfFiles = resource.listFiles();
@@ -123,7 +127,8 @@ public class OpseDataService {
 	@ApiOperation(value = "Return files for the collection id")
 	public byte[] download(HttpServletResponse response,
 			@ApiParam(name = "collectionId", value = "id of the collection to be downloaded", required = true) @RequestParam("collectionId") String collectionId,
-			@ApiParam(name = "filter", value = "filter indicates the selected items", required = false) @RequestParam(required = false) String filter) throws Exception {
+			@ApiParam(name = "filter", value = "filter indicates the selected items", required = false) @RequestParam(required = false) String filter,
+			@ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder) throws Exception {
 		LOG.info("Starting download collection " + collectionId);
 
 		String FolderName = config.getOpenOpseFolderName();
@@ -132,7 +137,7 @@ public class OpseDataService {
 		if (workDirectory.exists() == false) {
 			workDirectory.mkdirs();
 		}
-		File requestFolder = new File(workDirectory, collectionId+"/netcdf");
+		File requestFolder = new File(workDirectory, collectionId+folder);
 		if (requestFolder.exists() == false) {
 			requestFolder.mkdirs();
 		}
@@ -165,7 +170,8 @@ public class OpseDataService {
 	@ApiOperation(value = "Return files for the collection id")
 	public void downloadFile (HttpServletResponse response,
 			@ApiParam(name = "collectionId", value = "id of the collection to be downloaded", required = true) @RequestParam("collectionId") String collectionId,
-			@ApiParam(name = "filter", value = "filter indicates the selected items", required = true) @RequestParam(required = true) String filter) throws Exception {
+			@ApiParam(name = "filter", value = "filter indicates the selected items", required = true) @RequestParam(required = true) String filter,
+			@ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder) throws Exception {
 		LOG.info("Starting download collection " + collectionId);
 		String zipFileName = getZipFileNameFromId(collectionId);
 
@@ -173,7 +179,7 @@ public class OpseDataService {
 		response.setHeader("Content-Disposition", "attachment;filename="+zipFileName);
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		List<String> fileNames = getFileNameFromUuidAndYear(collectionId, filter);
+		List<String> fileNames = getFileNameFromUuidAndYear(collectionId, filter, folder);
 
 		LOG.info("file size " + fileNames.size());
 
@@ -258,7 +264,8 @@ public class OpseDataService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return year file data")
 	public OSResponse request(
-			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection) {
+			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection,
+			@ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder) {
 
 		OSResponse response = new OSResponse();
 		List<OSEntry> entries = new ArrayList<>();
@@ -266,7 +273,16 @@ public class OpseDataService {
 
 		try {
 			Map<String, OSEntry> entriesMap = new HashMap<>();
-			File resource = new File(config.getOpenOpseFolderName(), collection+"/netcdf");
+			File resource = new File(config.getOpenOpseFolderName(), collection+folder);
+			resource.mkdirs();
+			/*if (!resource.exists()) {
+				resource.mkdir();
+			}*/
+			/*Path filePath = Paths.get(resource.getAbsolutePath());
+			if (Files.notExists(filePath)) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Folder does no exist");
+				
+			}*/
 			File [] listOfFiles = resource.listFiles();
 			for (File file : listOfFiles) {
 				if (file.isFile()) {
