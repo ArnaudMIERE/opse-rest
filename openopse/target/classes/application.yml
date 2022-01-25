@@ -1,0 +1,126 @@
+temporary:
+   cronExpression: 0 30 20 * * *
+   storageDuration: 2
+
+server:
+    port: 8604
+    error.whitelabel.enabled: false
+ 
+logging:
+   file: ../logs/opse-prod.log
+   
+catalogue.url: https://services.aeris-data.fr/theiacatalogueprod/metadata/
+   
+        
+metadataService:    
+    url: https://services.aeris-data.fr/theiacatalogueprod/metadata/
+
+mtropics.laos.excel.sheet.uuid: "{'6mn':'3c870a03-324b-140d-7d98-d3585a63e6ec','Hourly':'353d7f00-8d6a-2a34-c0a2-5903c64e800b','Daily':'7bc45591-5b9f-a13d-90dc-f2a75b0a15cc','Aperiodic':'389bbea0-7279-12c1-63d0-cfc4a77ded87'}"
+mtropics.thailand.excel.sheet.uuid: "{'6mn':'27c65b5f-59cb-87c1-4fdf-628e6143d8c4','Hourly':'fa0bca5f-caee-5c68-fed7-544fe121dcf5','Daily':'0a12ffcf-42bc-0289-1c55-a769ef19bb16','Aperiodic':'85fb6717-4095-a2a2-34b5-4f1b70cfd304'}"
+mtropics.vietnam.excel.sheet.uuid: "{'6mn':'d74ab1b0-379b-71cc-443b-662a73b7f596','Hourly':'8df40086-4232-d8d0-a1ed-56c860818989','Daily':'3d3382d5-08c1-2595-190b-8568a1d2d6af','Aperiodic':'9e6f7144-8984-23bd-741a-06378fabd72c'}"
+  
+    
+mail:
+    hostname: localhost
+    subjectPrefix: '[M-TROPICS]'
+    from: northstar@sedoo.fr
+    confirmUrl: http://localhost:8604/data/v1_0/registrationAcceptation
+ 
+spring:
+    application.name: MTropics
+#    boot:
+#       admin:
+#           client:
+#               url: http://127.0.0.1:9999 
+#
+#endpoints:
+#    enabled: true
+#    health:
+#        enabled: true
+#management:
+#    endpoints:
+#      web:
+#        exposure:
+#          include: "*"
+#    endpoint:
+#        health:
+#            show-details: "ALWAYS"
+#            northstar:
+#                cacheup: 240
+#                cachedown: 120
+
+
+
+
+---
+spring.profiles: dev
+
+---
+spring.profiles: fa
+
+mail.msecContactEmail: noone@gmail.com
+mail.sedooContactEmail: noone@gmail.com
+
+dataPolicy: /home/amiere/data1/mtropics/data-policy/*.pdf
+
+
+
+
+---
+spring.profiles: am
+
+
+dataPolicy: /home/amiere/data1/mtropics/data-policy/*.pdf
+
+mail:
+    hostname: localhost
+    subjectPrefix: '[M-TROPICS]'
+    from: northstar@sedoo.fr
+    confirmUrl: http://localhost:8604/data/v1_0/registrationAcceptation
+    msecContactEmail: arnaud.miere@obs-mip.fr
+    sedooContactEmail: arnaud.miere@obs-mip.fr,
+    
+msec.contact.email: arnaud.miere@obs-mip.fr
+sedoo.contact.email: arnaud.miere@obs-mip.fr
+
+spring:
+   data.mongodb:
+      host: localhost
+      port: 27017
+      database: openopse
+      username: openopse
+   #   password: ope001
+   
+openOpse:
+    data: /home/amiere/Documents/data/
+    depot: /home/amiere/Documents/depot/
+local:
+    baseFolder: /home/amiere/Documents/tmp
+
+
+---
+spring.profiles: prod
+
+local:
+    baseFolder: /data2/opse-prod/tmp
+
+openOpse:
+    data: /data/baobab/openopse/openOpse/data
+    depot: /data/baobab/openopse/openOpse/depot
+
+
+mail:
+    hostname: localhost
+    subjectPrefix: '[OPEN-OPSE]'
+    from: northstar@sedoo.fr
+    confirmUrl: https://services.sedoo.fr/mtropics/data/v1_0/registrationAcceptation
+    msecContactEmail: laurie.boithias@get.omp.eu
+    sedooContactEmail: arnaud.miere@obs-mip.fr,françois.andre@obs-mip.fr
+
+spring:
+   data.mongodb:
+      host: localhost
+      port: 27017
+      database: openopse
+      username: openopse
+      password: ope001
