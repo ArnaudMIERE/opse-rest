@@ -29,4 +29,20 @@ public class ProdEmailSender implements EmailSender {
 		email.send();
 	}
 
+	public String getHostname() {
+		return hostname;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
 }

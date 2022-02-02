@@ -12,7 +12,20 @@ public class OSEntry implements Comparable<OSEntry> {
 	private Long totalSize;
 	private Integer fileNumber;
 	private String name;
+	private String url;
 	
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
 
 	public String getDate() {
 		return date;

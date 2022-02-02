@@ -70,7 +70,7 @@ dataPolicy: /home/amiere/data1/mtropics/data-policy/*.pdf
 spring.profiles: am
 
 
-dataPolicy: /home/amiere/data1/mtropics/data-policy/*.pdf
+dataPolicy: /home/openopse/Documents/GitHub/data1/mtropics/data-policy/*.pdf
 
 mail:
     hostname: localhost
@@ -92,10 +92,10 @@ spring:
    #   password: ope001
    
 openOpse:
-    data: /home/amiere/Documents/data/
-    depot: /home/amiere/Documents/depot/
+    data: /home/openopse/Documents/GitHub/data/
+    depot: /home/openopse/Documents/GitHub/depot/
 local:
-    baseFolder: /home/amiere/Documents/tmp
+    baseFolder: /home/openopse/Documents/GitHub/tmp
 
 
 ---

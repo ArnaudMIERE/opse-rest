@@ -30,10 +30,11 @@ public class DomainFilter {
 	 */
 	private void readRequestParam(String filter) {
 		if (StringUtils.isNotEmpty(filter)) {
-			String[] split = filter.split("__");
+			String[] split = filter.split("____");
 			for (int i = 0; i < split.length; i++) {
+				//System.out.println("valeurs section "+split[i]);
 				String currentFilter = split[i];
-				String[] split2 = currentFilter.split("_");
+				String[] split2 = currentFilter.split("___");
 				if (split2[0].toLowerCase().equalsIgnoreCase("year")) {
 					for (int j = 1; j < split2.length; j++) {
 						this.getYears().add(split2[j]);
@@ -49,6 +50,30 @@ public class DomainFilter {
 				}
 			}
 		}
+	}
+
+	public Set<String> getYears() {
+		return years;
+	}
+
+	public void setYears(Set<String> years) {
+		this.years = years;
+	}
+
+	public Set<String> getSites() {
+		return sites;
+	}
+
+	public void setSites(Set<String> sites) {
+		this.sites = sites;
+	}
+
+	public Set<String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Set<String> parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
@@ -106,6 +131,15 @@ public class DomainFilter {
 				return sites.contains(site);
 			}
 		}
+	}
+	
+	public static void main(String arg[]) {
+		Set<String> set = new HashSet<>();
+		set.add("test");
+		set.add("test1");
+		set.add("test2");
+		System.out.println(set);
+		System.out.println();
 	}
 
 }
