@@ -1,5 +1,6 @@
 package fr.sedoo.openopse.rest.domain;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,7 +14,16 @@ public class OSEntry implements Comparable<OSEntry> {
 	private Integer fileNumber;
 	private String name;
 	private String url;
+	private byte[] image;
 	
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	public String getUrl() {
 		return url;

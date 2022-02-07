@@ -1,8 +1,12 @@
 package fr.sedoo.openopse.rest.service.v1_0;
 
 import java.awt.Desktop;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -21,6 +25,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
@@ -458,11 +463,11 @@ public class OpseDataService {
 	}
 	
 	@RequestMapping(value = "/thumbnails", method = RequestMethod.GET)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Return year file data")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ResponseBody
 	public OSResponse getThumbnails(
 			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection,
-			@ApiParam(name = "format", value = "format indicates the selected items", required = true) @RequestParam(required = true) String folder) {
+			@ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder) {
 
 		OSResponse response = new OSResponse();
 		List<OSEntry> entries = new ArrayList<>();
@@ -496,7 +501,14 @@ public class OpseDataService {
 							//System.out.println("l'url complete "+file.toURI().toURL());
 							//System.out.println("l'url complete 2 "+file.toURI().toURL().getPath());
 							osEntry.setUrl(path);
+							BufferedImage bufferedImage = ImageIO.read(file);
+
+							 // get DataBufferBytes from Raster
+							InputStream in = new FileInputStream(file);
+		                    //result.add(IOUtils.toByteArray(in));
+							osEntry.setImage(IOUtils.toByteArray(in));
 							urlsMap.put(file.getName(), osEntry);
+							
 						}
 					}
 				}
@@ -514,6 +526,27 @@ public class OpseDataService {
 		}
 
 	}
+	
+	@RequestMapping(value = "/getImage", method = RequestMethod.GET )
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ResponseBody
+    public List<byte[]> getimage(HttpServletResponse response,
+                    @ApiParam(name = "collectionId", value = "id of the collection to be downloaded", required = true) @RequestParam("collectionId") String collectionId,
+                    @ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder) throws IOException {
+            
+            response.setContentType("application/octet-stream");
+            List<byte[]> result = new ArrayList();
+           
+            File resource = new File(config.getOpenOpseFolderName(), collectionId + folder);
+			// resource.mkdirs();
+			File[] listOfFiles = resource.listFiles();
+            //List<String> fileNames = getFileNameFromUuidAndYear(collectionId, filter, folder);
+            for (File image : listOfFiles) {
+                    InputStream in = new FileInputStream(image);
+                    result.add(IOUtils.toByteArray(in));
+            }
+            return result;
+    }
 
 	@RequestMapping(value = "/dataFiles", method = RequestMethod.GET)
 	@Produces(MediaType.APPLICATION_JSON)
