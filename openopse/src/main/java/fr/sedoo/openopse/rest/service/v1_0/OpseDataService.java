@@ -497,16 +497,13 @@ public class OpseDataService {
 						if (osEntry == null) {
 							osEntry = new OSEntry();
 							String path = resource.getAbsolutePath()+"/"+file.getName();
-							//System.out.println("le chemin complet "+path);
-							//System.out.println("l'url complete "+file.toURI().toURL());
-							//System.out.println("l'url complete 2 "+file.toURI().toURL().getPath());
 							osEntry.setUrl(path);
 							BufferedImage bufferedImage = ImageIO.read(file);
 
 							 // get DataBufferBytes from Raster
 							InputStream in = new FileInputStream(file);
-		                    //result.add(IOUtils.toByteArray(in));
 							osEntry.setImage(IOUtils.toByteArray(in));
+							osEntry.setName(file.getName());
 							urlsMap.put(file.getName(), osEntry);
 							
 						}
