@@ -145,7 +145,8 @@ public class OpseDataService {
 					table.removeColumns(p);
 				}
 			}
-			String tmp_folder = resource.getAbsolutePath().concat("/tmp/");
+			//String tmp_folder = resource.getAbsolutePath().concat("/tmp/");
+			String  tmp_folder = config.getTemporaryDownloadFolderName();
 			File tmp = new File(tmp_folder);
 			if (tmp.exists() == false) {
 				tmp.mkdirs();
