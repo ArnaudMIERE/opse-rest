@@ -525,6 +525,56 @@ public class OpseDataService {
 
 	}
 	
+	@RequestMapping(value = "/photos", method = RequestMethod.GET)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @ResponseBody
+	public OSResponse getImageFromPhotos(
+			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection) {
+		
+		
+		OSResponse response = new OSResponse();
+		List<OSEntry> entries = new ArrayList<>();
+		
+		response.setEntries(entries);
+		
+		String folder = "/photos";
+
+		try {
+			Map<String, OSEntry> entriesMap = new HashMap<>();
+			File resource = new File(config.getOpenOpseFolderName(), collection + folder);
+			// resource.mkdirs();
+			File[] listOfFiles = resource.listFiles();
+			for (File file : listOfFiles) {
+				if (file.isFile()) {
+					//String year = FileUtils.getYear(file.getName());
+					String year =file.getName().substring(0, 4);
+					if (StringUtils.isNoneEmpty(year)) {
+						OSEntry osEntry = entriesMap.get(year);
+						if (osEntry == null) {
+							osEntry = new OSEntry();
+							osEntry.setDate(new GregorianCalendar(Integer.parseInt(year), 0, 1).getTime());
+							String path = resource.getAbsolutePath()+"/"+file.getName();
+							osEntry.setUrl(path);
+							 // get DataBufferBytes from Raster
+							InputStream in = new FileInputStream(file);
+							osEntry.setImage(IOUtils.toByteArray(in));
+							osEntry.setName(file.getName());
+							entriesMap.put(year, osEntry);
+						}
+					}
+				}
+			}
+			entries.addAll(entriesMap.values());
+			Collections.sort(entries);
+
+			return response;
+		} catch (Exception e) {
+			LOG.error(ExceptionUtils.getStackTrace(e));
+			throw new RuntimeException();
+		}
+
+	}
+	
 	@RequestMapping(value = "/getImage", method = RequestMethod.GET )
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @ResponseBody
