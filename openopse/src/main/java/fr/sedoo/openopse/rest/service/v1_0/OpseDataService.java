@@ -208,7 +208,7 @@ public class OpseDataService {
 		if (workDirectory.exists() == false) {
 			workDirectory.mkdirs();
 		}
-		File requestFolder = new File(workDirectory, collectionId + folder.replaceFirst("thumnails", "data"));
+		File requestFolder = new File(workDirectory, collectionId + folder.replaceFirst("thumbnails", "data"));
 		if (requestFolder.exists() == false) {
 			requestFolder.mkdirs();
 		}
@@ -225,6 +225,34 @@ public class OpseDataService {
 			byte[] result = IOUtils.toByteArray(is);
 
 			response.addHeader("Content-Disposition", "attachment; filename=" + zipFileName);
+			return result;
+		} catch (Exception e) {
+			LOG.error(ExceptionUtils.getStackTrace(e));
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+
+		}
+	}
+	
+	@RequestMapping(value = "/downloadImg", method = RequestMethod.GET)
+	@Produces("application/jpeg")
+	@ApiOperation(value = "Return files for the collection id")
+	public byte[] downloadImg(HttpServletResponse response,
+			@ApiParam(name = "collectionId", value = "id of the collection to be downloaded", required = true) @RequestParam("collectionId") String collectionId,
+			@ApiParam(name = "image", value = "filter indicates the selected items", required = false) @RequestParam(required = false) String image)
+			throws Exception {
+		LOG.info("Starting download collection " + collectionId);
+		try {
+			System.out.println("chemin du fichier "+image);
+			File file =  new File(image.replaceFirst("thumbnails", "data"));
+			if(file.exists()) {
+				image = image.replaceFirst("thumbnails", "data");
+			}else {
+				file =  new File(image);
+			}
+			InputStream is = new FileInputStream(file);
+			byte[] result = IOUtils.toByteArray(is);
+			String[] filename = image.split("/");
+			response.addHeader("Content-Disposition", "attachment; filename=" + filename[filename.length-1]);
 			return result;
 		} catch (Exception e) {
 			LOG.error(ExceptionUtils.getStackTrace(e));
@@ -499,6 +527,7 @@ public class OpseDataService {
 							osEntry = new OSEntry();
 							String path = resource.getAbsolutePath()+"/"+file.getName();
 							osEntry.setUrl(path);
+							
 							BufferedImage bufferedImage = ImageIO.read(file);
 
 							 // get DataBufferBytes from Raster
@@ -544,6 +573,7 @@ public class OpseDataService {
 			File resource = new File(config.getOpenOpseFolderName(), collection + folder);
 			// resource.mkdirs();
 			File[] listOfFiles = resource.listFiles();
+			//System.out.println("chemin du repertoire "+resource.getAbsolutePath());
 			for (File file : listOfFiles) {
 				if (file.isFile()) {
 					//String year = FileUtils.getYear(file.getName());
