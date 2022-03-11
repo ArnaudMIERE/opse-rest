@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -64,6 +65,10 @@ import fr.sedoo.openopse.rest.domain.OSResponse;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import tech.tablesaw.api.DateTimeColumn;
+import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.IntColumn;
+import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 @RestController
@@ -110,6 +115,63 @@ public class OpseDataService {
 
 	private String getZipFileNameFromId(String id) {
 		return "dataset-" + id + ".zip";
+	}
+	private List<String> getFilesSelected(String uuid, String[] years){
+		String folderName = config.getOpenOpseFolderName();
+		File workDirectory = new File(folderName);
+
+		File resource = new File(workDirectory, uuid + DEFAULT_PATH_CSV);
+		LOG.info("Path " + resource.getAbsolutePath());
+		List<String> currentFile = new ArrayList<>();
+		File[] listOfFiles = resource.listFiles();
+		for (File file : listOfFiles) {
+			for (String year : years) {
+				if (file.getName().contains(year)) {
+					String destinationFilePath = resource.getAbsolutePath().concat("/").concat(file.getName());
+
+					currentFile.add(destinationFilePath);
+				}
+			}
+		}
+		return currentFile;
+	}
+	
+	@RequestMapping(value = "/json", method = RequestMethod.GET)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Return year and params file data")
+	public OSResponse json(@ApiParam(name = "uuid", value = "id of the collection to be downloaded", required = true) @RequestParam("uuid") String uuid, 
+			@ApiParam(name = "year", value = "selected years", required = true) @RequestParam("year") String year, 
+			@ApiParam(name = "param", value = "selected params", required = true) @RequestParam("param") String param) throws IOException {
+		OSResponse response = new OSResponse();
+		List<OSEntry> entries = new ArrayList<>();
+		String[] allYears=year.split("___");
+		List<String> files = getFilesSelected(uuid, allYears);
+		
+		String[] params = param.split("___");
+		DateTimeColumn sc = (DateTimeColumn) Table.read().file(files.get(0)).column("DateSemih");
+		LocalDateTime[] keys =  sc.asObjectArray();
+		for(String file:files) {
+			Table table = Table.read().file(file);
+			for(String p:params) {
+				OSEntry osEntry = new OSEntry();
+				DoubleColumn dc = (DoubleColumn) table.column(p);
+				osEntry.setKey(keys);
+				double[] datas = dc.asDoubleArray();
+				for(int i=0; i<datas.length; i++){
+				    if(Double.isNaN(datas[i])) {
+				        datas[i] = 0d;
+				    }
+				}
+				osEntry.setName(p);
+				osEntry.setData(datas);
+				entries.add(osEntry);
+			}
+			
+		}
+		System.out.print(entries.size());
+		//response.setUrls(urls);
+		response.setEntries(entries);
+		return response;
 	}
 
 	private List<String> getFileNameFromUuidAndYear(String collection, String filter, String folder)
@@ -421,7 +483,7 @@ public class OpseDataService {
 		try {
 			Map<String, OSEntry> entriesMap = new HashMap<>();
 			File resource = new File(config.getOpenOpseFolderName(), collection + folder);
-			// resource.mkdirs();
+			resource.mkdirs();
 			/*
 			 * if (!resource.exists()) { resource.mkdir(); }
 			 */
@@ -433,6 +495,9 @@ public class OpseDataService {
 			 * }
 			 */
 			File[] listOfFiles = resource.listFiles();
+			System.out.println("la chemin du fichier "+resource.getAbsolutePath());
+			if(listOfFiles==null) return response;
+			
 			for (File file : listOfFiles) {
 				if (file.isFile()) {
 					String year = FileUtils.getYear(file.getName());
@@ -553,6 +618,7 @@ public class OpseDataService {
 		}
 
 	}
+	
 	
 	@RequestMapping(value = "/photos", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

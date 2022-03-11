@@ -2,6 +2,7 @@ package fr.sedoo.openopse.rest.domain;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class OSEntry implements Comparable<OSEntry> {
@@ -15,7 +16,25 @@ public class OSEntry implements Comparable<OSEntry> {
 	private String name;
 	private String url;
 	private byte[] image;
+	private double[] data;
+	private LocalDateTime[] key;
 	
+
+	public double[] getData() {
+		return data;
+	}
+
+	public void setData(double[] data) {
+		this.data = data;
+	}
+
+	public LocalDateTime[] getKey() {
+		return key;
+	}
+
+	public void setKey(LocalDateTime[] key) {
+		this.key = key;
+	}
 
 	public byte[] getImage() {
 		return image;
