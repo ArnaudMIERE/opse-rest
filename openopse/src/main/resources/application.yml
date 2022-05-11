@@ -92,10 +92,10 @@ spring:
    #   password: ope001
    
 openOpse:
-    data: /home/openopse/Documents/GitHub/data/
-    depot: /home/openopse/Documents/GitHub/depot/
+    data: /Users/mac/Documents/GitHub/data/
+    depot: /Users/mac/Documents/GitHub/depot/
 local:
-    baseFolder: /home/openopse/Documents/GitHub/tmp
+    baseFolder: /Users/mac/Documents/GitHub/tmp
 
 
 ---

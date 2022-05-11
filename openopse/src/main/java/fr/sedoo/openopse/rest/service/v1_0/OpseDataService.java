@@ -1,19 +1,14 @@
 package fr.sedoo.openopse.rest.service.v1_0;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +17,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -40,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StreamUtils;
 
 import javax.ws.rs.core.MediaType;
@@ -50,13 +43,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.zeroturnaround.zip.ZipUtil;
 
 import com.google.common.base.Strings;
 
 import fr.sedoo.openopse.rest.domain.DomainFilter;
-import fr.sedoo.commons.util.StringUtil;
 import fr.sedoo.openopse.rest.config.ApplicationConfig;
 import fr.sedoo.openopse.rest.dao.FileUtils;
 import fr.sedoo.openopse.rest.domain.FileInfo;
@@ -67,8 +58,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import tech.tablesaw.api.DateTimeColumn;
 import tech.tablesaw.api.DoubleColumn;
-import tech.tablesaw.api.IntColumn;
-import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 @RestController
@@ -148,7 +137,25 @@ public class OpseDataService {
 		List<String> files = getFilesSelected(uuid, allYears);
 		
 		String[] params = param.split("___");
-		DateTimeColumn sc = (DateTimeColumn) Table.read().file(files.get(0)).column("DateSemih");
+		List<String> columns = Table.read().file(files.get(0)).columnNames();
+		String column = null;
+		if(columns.contains("DateSemih")) {
+			column = "DateSemih";
+		}else {
+			String folderName = config.getOpenOpseFolderName();
+			File workDirectory = new File(folderName);
+			File file = new File(workDirectory, uuid + FILE_PATH+"datetime.txt");
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				column = br.readLine();
+				br.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(column == null )return response;
+		DateTimeColumn sc = (DateTimeColumn) Table.read().file(files.get(0)).column(column);
 		LocalDateTime[] keys =  sc.asObjectArray();
 		for(String file:files) {
 			Table table = Table.read().file(file);
@@ -159,7 +166,7 @@ public class OpseDataService {
 				double[] datas = dc.asDoubleArray();
 				for(int i=0; i<datas.length; i++){
 				    if(Double.isNaN(datas[i])) {
-				        datas[i] = 0d;
+				        //datas[i] = 0d;
 				    }
 				}
 				osEntry.setName(p);
@@ -575,6 +582,7 @@ public class OpseDataService {
 			Map<String, OSEntry> urlsMap = new HashMap<>();
 			File resource = new File(config.getOpenOpseFolderName(), collection + folder);
 			// resource.mkdirs();
+			System.out.println("chemin complet "+resource.getAbsolutePath());
 			File[] listOfFiles = resource.listFiles();
 			for (File file : listOfFiles) {
 				if (file.isFile()) {
