@@ -164,11 +164,11 @@ public class OpseDataService {
 				DoubleColumn dc = (DoubleColumn) table.column(p);
 				osEntry.setKey(keys);
 				double[] datas = dc.asDoubleArray();
-				for(int i=0; i<datas.length; i++){
-				    if(Double.isNaN(datas[i])) {
+				//for(int i=0; i<datas.length; i++){
+				  //  if(Double.isNaN(datas[i])) {
 				        //datas[i] = 0d;
-				    }
-				}
+				 //   }
+				//}
 				osEntry.setName(p);
 				osEntry.setData(datas);
 				entries.add(osEntry);
