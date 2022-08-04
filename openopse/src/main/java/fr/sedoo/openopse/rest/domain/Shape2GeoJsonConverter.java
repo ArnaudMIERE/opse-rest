@@ -22,11 +22,11 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import fr.sedoo.openopse.rest.dao.MtropicsJsonStyleDao;
+import fr.sedoo.openopse.rest.dao.OpseJsonStyleDao;
 
 public class Shape2GeoJsonConverter {
 
-	public static String convertShapeFile(File shapeFile, MtropicsJsonStyleDao styleDao) throws Exception {
+	public static String convertShapeFile(File shapeFile/*, OpseJsonStyleDao styleDao*/) throws Exception {
 		FileDataStore dataStore = FileDataStoreFinder.getDataStore(shapeFile);
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource();
 		String typeName = dataStore.getTypeNames()[0];
@@ -64,7 +64,8 @@ public class Shape2GeoJsonConverter {
 			writer.append(" ]\n" + "     }");
 
 			String json = writer.toString();
-			return addStyle(json, styleDao);
+			//return addStyle(json, styleDao);
+			return json;
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -76,7 +77,7 @@ public class Shape2GeoJsonConverter {
 		}
 	}
 
-	private static String addStyle(String content, MtropicsJsonStyleDao styleDao) throws Exception {
+	private static String addStyle(String content, OpseJsonStyleDao styleDao) throws Exception {
 		JSONObject json = new JSONObject(content);
 		JSONArray features = json.getJSONArray("features");
 		for (int i = 0; i < features.length(); i++) {

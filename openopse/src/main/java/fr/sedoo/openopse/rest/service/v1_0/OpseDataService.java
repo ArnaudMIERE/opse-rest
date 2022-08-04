@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -48,6 +51,7 @@ import org.zeroturnaround.zip.ZipUtil;
 import com.google.common.base.Strings;
 
 import fr.sedoo.openopse.rest.domain.DomainFilter;
+import fr.sedoo.openopse.rest.domain.etc.ExecutionResult;
 import fr.sedoo.openopse.rest.config.ApplicationConfig;
 import fr.sedoo.openopse.rest.dao.FileUtils;
 import fr.sedoo.openopse.rest.domain.FileInfo;
@@ -704,12 +708,13 @@ public class OpseDataService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Return year file data")
 	public List<FileInfo> dataFiles(
-			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection) {
+			@ApiParam(name = "collection", value = "id of the collection to be downloaded", required = true) @RequestParam("collection") String collection,
+			@ApiParam(name = "folder", value = "folder indicates the selected items", required = true) @RequestParam(required = true) String folder){
 
 		List<FileInfo> entries = new ArrayList<>();
 
 		try {
-			File resource = new File(config.getOpenOpseDepotFolder(), collection);
+			File resource = new File(config.getOpenOpseFolderName(), collection+folder);
 			File[] listOfFiles = resource.listFiles();
 			for (File file : listOfFiles) {
 				FileInfo entry = new FileInfo();
@@ -796,12 +801,25 @@ public class OpseDataService {
 		}
 		return fileInfos;
 	}
-
-	/*
-	 * @RequestMapping(value = "/parameter", method = RequestMethod.GET)
-	 * 
-	 * @ResponseBody public String parameter (@RequestParam("collection") String
-	 * collection) { StringBuilder message = new StringBuilder(); }
-	 */
-
+	@RequestMapping(value = "/mmetopng", method = RequestMethod.GET)
+	@ResponseBody
+	public void generateThumbnails(@RequestParam("collection") String collection) throws IOException, InterruptedException {
+		String source = config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/";
+		String destination = config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/";
+		File src = new File(source);
+		File dest = new File(destination);
+		
+		ProcessBuilder processBuilder = new ProcessBuilder("/home/amiere/Documents/python/convert_MNE_TIFF_to_PNG.py");
+		processBuilder.directory(src);
+		processBuilder.redirectOutput(dest);
+		
+		Process process = processBuilder.start();
+		
+		
+		int exitCode = process.waitFor();
+		
+		LOG.info("No errors should be detected", 0, exitCode);
+	}
+	
+	
 }

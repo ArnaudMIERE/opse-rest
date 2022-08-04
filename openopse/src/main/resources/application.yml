@@ -92,10 +92,17 @@ spring:
    #   password: ope001
    
 openOpse:
-    data: /Users/mac/Documents/GitHub/data/
-    depot: /Users/mac/Documents/GitHub/depot/
+    data: /home/amiere/Documents/data/
+    depot: /home/amiere/Documents/depot/
 local:
-    baseFolder: /Users/mac/Documents/GitHub/tmp
+    baseFolder: /home/amiere/Documents/tmp
+    
+etc.python:
+    venvdir: /home/amiere/Documents/python/venv
+    scriptdir: /home/amiere/Documents/python/scripts/
+    convertMneToPngLauncherScript: convertMneToPng.sh
+    spipEtcLauncherScript: SpipLauncher.sh
+    etcInstallScript: install.sh
 
 
 ---

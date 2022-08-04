@@ -17,6 +17,9 @@ public class ApplicationConfig {
 	@Value("${local.baseFolder}")
 	private String temporaryDownloadFolderName;
 	
+	@Value("${local.baseFolder}/geojson")
+	private String temporaryGeojsonFolderName;
+	
 	@Value("${openOpse.depot}")
 	private String openOpseDepotFolder;
 
@@ -43,6 +46,20 @@ public class ApplicationConfig {
 	public void setOpenOpseDepotFolder(String openOpseDepotFolder) {
 		this.openOpseDepotFolder = openOpseDepotFolder;
 	}
+	@Value("${etc.python.venvdir}")
+	private String virtualEnvironmentFolderName;
+	
+	@Value("${etc.python.convertMneToPngLauncherScript}")
+	private String convertMneToPngLauncherScript;
+	
+	@Value("${etc.python.spipEtcLauncherScript}")
+	private String spipLauncherScript; 
+	
+	@Value("${etc.python.scriptdir}")
+	private String scriptFolderName;
+	
+	@Value("${etc.python.etcInstallScript}")
+	private String installScript;
 
 	
 

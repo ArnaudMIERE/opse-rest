@@ -6,4 +6,5 @@ public interface FolderConstants {
 	String NETCDF_FILE = "/data/netcdf";
 	String CSV_FILE = "/data/csv";
 	String JPEG_FILE = "/data/jpeg";
+	String SHAPE_FILE = "/data/shp";
 }
