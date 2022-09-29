@@ -9,4 +9,9 @@ public class ExecutionResult {
 	
 	private String content;
 
+	public void setContent(String result) {
+		// TODO Auto-generated method stub
+		this.content = result;
+	}
+
 }
