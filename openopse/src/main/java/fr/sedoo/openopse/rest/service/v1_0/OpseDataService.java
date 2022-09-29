@@ -803,23 +803,39 @@ public class OpseDataService {
 	}
 	@RequestMapping(value = "/mmetopng", method = RequestMethod.GET)
 	@ResponseBody
-	public void generateThumbnails(@RequestParam("collection") String collection) throws IOException, InterruptedException {
-		String source = config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/";
-		String destination = config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/";
-		File src = new File(source);
-		File dest = new File(destination);
+	public File generateThumbnails(@RequestParam("collection") String collection) throws IOException, InterruptedException {
+		//String source = config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/";
+		//String destination = config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/";
+		File src = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/sedoo-full.tiff");
+		//File dest = new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/"+src.getName());
 		
-		ProcessBuilder processBuilder = new ProcessBuilder("/home/amiere/Documents/python/convert_MNE_TIFF_to_PNG.py");
+		//ProcessBuilder processBuilder = new ProcessBuilder("/home/amiere/Documents/python/convert_MNE_TIFF_to_PNG.py");
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.command("/home/amiere/git/opse-rest/openopse/src/main/resources");
 		processBuilder.directory(src);
-		processBuilder.redirectOutput(dest);
+		//processBuilder.redirectOutput(dest);
 		
 		Process process = processBuilder.start();
 		
+		BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
-		int exitCode = process.waitFor();
 		
-		LOG.info("No errors should be detected", 0, exitCode);
+		String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+
+        int exitCode = process.waitFor();
+        System.out.println("\nExited with error code : " + exitCode);
+        File dest = new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/"+src.getName());
+        return dest;
 	}
+	
+		
+		
+		
+	
 	
 	
 }
