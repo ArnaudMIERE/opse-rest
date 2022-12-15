@@ -22,9 +22,8 @@ mtropics.vietnam.excel.sheet.uuid: "{'6mn':'d74ab1b0-379b-71cc-443b-662a73b7f596
     
 mail:
     hostname: localhost
-    subjectPrefix: '[M-TROPICS]'
+    subjectPrefix: '[OPSE]'
     from: northstar@sedoo.fr
-    confirmUrl: http://localhost:8604/data/v1_0/registrationAcceptation
  
 spring:
     application.name: MTropics
@@ -74,14 +73,18 @@ dataPolicy: /home/openopse/Documents/GitHub/data1/mtropics/data-policy/*.pdf
 
 mail:
     hostname: localhost
-    subjectPrefix: '[M-TROPICS]'
-    from: northstar@sedoo.fr
+    subjectPrefix: '[OPSE]'
+    from: arnaud.miere@gmail.com
     confirmUrl: http://localhost:8604/data/v1_0/registrationAcceptation
-    msecContactEmail: arnaud.miere@obs-mip.fr
-    sedooContactEmail: arnaud.miere@obs-mip.fr,
+    msecContactEmail: arnaud_salsero@yahoo.fr
+    sedooContactEmail: arnaud_fernand@hotmail.com,
     
 msec.contact.email: arnaud.miere@obs-mip.fr
 sedoo.contact.email: arnaud.miere@obs-mip.fr
+
+sso:
+	login: arnaud.miere@obs-mip.fr
+	password: Miere22@r
 
 spring:
    data.mongodb:
@@ -95,7 +98,7 @@ openOpse:
     data: /home/amiere/Documents/data/
     depot: /home/amiere/Documents/depot/
 local:
-    baseFolder: /home/amiere/Documents/tmp
+    baseFolder: /home/amiere/Documents/tmp/
     
 etc.python:
     venvdir: /home/amiere/Documents/python/venv
@@ -116,13 +119,11 @@ openOpse:
     depot: /data/baobab/openopse/openOpse/depot
 
 
-mail:
-    hostname: localhost
-    subjectPrefix: '[OPEN-OPSE]'
-    from: northstar@sedoo.fr
-    confirmUrl: https://services.sedoo.fr/mtropics/data/v1_0/registrationAcceptation
-    msecContactEmail: laurie.boithias@get.omp.eu
-    sedooContactEmail: arnaud.miere@obs-mip.fr,françois.andre@obs-mip.fr
+etc.python:
+    scriptdir: /data2/opse-prod/python/scripts/
+    
+    
+    
 
 spring:
    data.mongodb:

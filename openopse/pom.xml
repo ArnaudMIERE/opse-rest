@@ -26,6 +26,12 @@
 	</properties>
 
 	<dependencies>
+	
+	<dependency>
+<groupId>fr.sedoo</groupId>
+    <artifactId>sedoo-sso-utils</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
 
 <dependency>
 			<groupId>org.geotools</groupId>
@@ -313,7 +319,11 @@
 	</build>
 
 	<repositories>
-
+	<repository>
+        <id>sso-snapshots</id>
+        <url>https://sourcesup.renater.fr/nexus/repository/sdossoutils-snapshots</url>
+        <snapshots><enabled>true</enabled></snapshots>
+    </repository>
 		<repository>
 			<id>metadata-snapshot</id>
 			<url>https://sourcesup.renater.fr/nexus/repository/aerismetadata-snapshots/</url>

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -732,8 +734,8 @@ public class OpseDataService {
 
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteFile(@RequestParam("fileName") String fileName, @RequestParam("collection") String collection) {
-		File resource = new File(config.getOpenOpseDepotFolder(), collection);
+	public void deleteFile(@RequestParam("fileName") String fileName, @RequestParam("collection") String collection, @RequestParam(required = true) String folder) {
+		File resource = new File(config.getOpenOpseFolderName(), collection+"/"+folder);
 		String file = resource.getAbsolutePath().concat("/").concat(fileName);
 		try {
 			Boolean result = Files.deleteIfExists(Paths.get(file));
@@ -803,33 +805,97 @@ public class OpseDataService {
 	}
 	@RequestMapping(value = "/mmetopng", method = RequestMethod.GET)
 	@ResponseBody
-	public File generateThumbnails(@RequestParam("collection") String collection) throws IOException, InterruptedException {
-		//String source = config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/";
-		//String destination = config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/";
-		File src = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/sedoo-full.tiff");
-		//File dest = new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/"+src.getName());
-		
-		//ProcessBuilder processBuilder = new ProcessBuilder("/home/amiere/Documents/python/convert_MNE_TIFF_to_PNG.py");
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.command("/home/amiere/git/opse-rest/openopse/src/main/resources");
-		processBuilder.directory(src);
-		//processBuilder.redirectOutput(dest);
-		
-		Process process = processBuilder.start();
-		
-		BufferedReader reader =
-                new BufferedReader(new InputStreamReader(process.getInputStream()));
-		
-		
-		String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
-        }
+	public void generateThumbnails(@RequestParam("collection") String collection) throws IOException, InterruptedException {
 
-        int exitCode = process.waitFor();
-        System.out.println("\nExited with error code : " + exitCode);
-        File dest = new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/"+src.getName());
-        return dest;
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		try {
+			processBuilder.command("python3", config.getScriptFolderName()+"/convert_MNE_TIFF_to_PNG.py", config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/");
+
+			Process process = processBuilder.start();
+
+			int exitCode = process.waitFor();
+			System.out.println("\nExited with error code : " + exitCode);
+			
+			 File fileToMove = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/thumbnails/");
+			 boolean isMoved = fileToMove.renameTo(new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE/"));
+			 if (!isMoved) {
+			        throw new FileSystemException(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MNE");
+			    }	
+			 File targetFile = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/");
+			 File[] listOfFiles = targetFile.listFiles();
+			 for (File file : listOfFiles) {
+				 boolean result = Files.deleteIfExists(Paths.get(file.getName()));
+				 if (result) {
+					 throw new FileSystemException(config.getOpenOpseFolderName()+collection+"/data/tiff/MNE/");
+				 }
+			 }
+			
+			 
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@RequestMapping(value = "/rgbtopng", method = RequestMethod.GET)
+	@ResponseBody
+	public void generateThumbnailsRgb(@RequestParam("collection") String collection) throws IOException, InterruptedException {
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		try {
+			processBuilder.command("python3", config.getScriptFolderName()+"/convert_RGB_TIFF_to_PNG.py", config.getOpenOpseFolderName()+collection+"/data/tiff/RGB/");
+
+			Process process = processBuilder.start();
+
+			int exitCode = process.waitFor();
+			System.out.println("\nExited with error code : " + exitCode);
+			
+			 File fileToMove = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/RGB/thumbnails/");
+			 boolean isMoved = fileToMove.renameTo(new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/RGB/"));
+			 if (!isMoved) {
+			        throw new FileSystemException(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/RGB");
+			    }	
+			 
+			
+			 
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@RequestMapping(value = "/mstopng", method = RequestMethod.GET)
+	@ResponseBody
+	public void generateThumbnailsMS(@RequestParam("collection") String collection) throws IOException, InterruptedException {
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		try {
+			processBuilder.command("python3", config.getScriptFolderName()+"/convert_MS_TIFF_to_PNG.py", config.getOpenOpseFolderName()+collection+"/data/tiff/MS/");
+
+			Process process = processBuilder.start();
+
+			int exitCode = process.waitFor();
+			System.out.println("\nExited with error code : " + exitCode);
+			
+			 File fileToMove = new File(config.getOpenOpseFolderName()+collection+"/data/tiff/MS/thumbnails/");
+			 boolean isMoved = fileToMove.renameTo(new File(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MS/"));
+			 if (!isMoved) {
+			        throw new FileSystemException(config.getOpenOpseFolderName()+collection+"/data/thumbnails/tiff/MS");
+			    }	
+			
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 		

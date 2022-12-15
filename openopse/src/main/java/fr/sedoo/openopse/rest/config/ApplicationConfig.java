@@ -11,6 +11,29 @@ import lombok.Setter;
 @Component
 public class ApplicationConfig {
 	
+	
+	@Value("${sso.login}")
+	private String login;
+	
+	@Value("${sso.password}")
+	private String password;
+	
+	@Value("${mail.msecContactEmail}")
+	private String msecContactEmail;
+	
+	@Value("${mail.sedooContactEmail}")
+	private String sedooContactEmail;
+	
+	@Value("${mail.hostname}")
+	private String hostname;
+	
+	@Value("${mail.subjectPrefix}")
+	private String subjectPrefix;
+	
+	@Value("${mail.from}")
+	private String from;
+	
+	
 	@Value("${openOpse.data}")
 	private String openOpseFolderName;
 
