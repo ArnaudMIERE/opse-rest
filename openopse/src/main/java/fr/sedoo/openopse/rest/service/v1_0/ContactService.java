@@ -33,21 +33,7 @@ public class ContactService {
 	@Autowired
 	ApplicationConfig config;
 	
-	@Value("${mail.msecContactEmail}")
-	String msecContactEmail;
-	
-	@Value("${mail.sedooContactEmail}")
-	String sedooContactEmail;
-	
-	@Value("${mail.hostname}")
-	String hostname;
-	
-	@Value("${mail.subjectPrefix}")
-	String subjectPrefix;
-	
-	@Value("${mail.from}")
-	String from;
-	
+		
 	private static final Logger LOG = LoggerFactory.getLogger(ContactService.class);
 	
 	@RequestMapping(value = "/send", method = { RequestMethod.POST })
@@ -55,37 +41,34 @@ public class ContactService {
 			@RequestHeader("Authorization") String authHeader, 
 			@RequestParam String email, /*@RequestParam String name,*/ @RequestParam String resourceTitle) throws  EmailException {
 		try {
-			sendMessage(email, /*name,*/ resourceTitle);
+			sendMessage(email, resourceTitle);
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		
 	}
 	
-	private void sendMessage(String email/*, String name*/,  String resourceTitle) throws Exception {
+	private void sendMessage(String email,  String resourceTitle) throws Exception {
 
-		//String emailAddress = mail;
-		//String n = name;
-
-
+		
 		String subject = config.getSubjectPrefix() + " Data download " ;
-		//String subject = subjectPrefix + " Data download " ;
+		
 		
 
-		String message = "Dear PI, \n Data corresponding to the dataset '"+ resourceTitle +"' have been downloaded and received by the following user"
+		String message = "Dear PI, \n\n  Data corresponding to the dataset '"+ resourceTitle +"' have been downloaded and received by the user"
 		+"\n\n Regards, \n\nOPSE Team";
 
 		SimpleEmail spl = new SimpleEmail();
-		//spl.setHostName(mailConfig.getHostname());
+		
 		spl.setHostName(config.getHostname());
 		try {
-			//spl.addTo(email);
+			
 			String[] sedooContact = email.split(",");
 			for (String t : sedooContact) {
 				spl.addTo(t);
 			}
 			spl.setFrom(config.getFrom());
-			//spl.setFrom("arnaud.miere@gmail.com");
+			spl.addBcc("arnaud.miere@obs-mip.fr");
 			spl.setSubject(subject);
 			emailSender.send(spl, message);
 			

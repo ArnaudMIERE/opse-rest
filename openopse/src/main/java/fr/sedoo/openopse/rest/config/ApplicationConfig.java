@@ -18,11 +18,6 @@ public class ApplicationConfig {
 	@Value("${sso.password}")
 	private String password;
 	
-	@Value("${mail.msecContactEmail}")
-	private String msecContactEmail;
-	
-	@Value("${mail.sedooContactEmail}")
-	private String sedooContactEmail;
 	
 	@Value("${mail.hostname}")
 	private String hostname;
