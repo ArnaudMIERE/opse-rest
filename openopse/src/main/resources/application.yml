@@ -64,20 +64,20 @@ dataPolicy: /home/openopse/Documents/GitHub/data1/mtropics/data-policy/*.pdf
 mail:
     hostname: localhost
     subjectPrefix: '[OPSE]'
-    from: arnaud.miere@gmail.com
+    from: ENC(dSbUtoK5k2TE0p1YMZoxDia3+uUx2njw+ujxsOoVFyQ=)
     
 
 sso:
-    login: arnaud.miere@obs-mip.fr
-    password: Miere22@r
+    login: ENC(dSbUtoK5k2TE0p1YMZoxDia3+uUx2njw+ujxsOoVFyQ=)
+    password: ENC(l2Ogu+dMtAvH83QYCTDmDGZS6C2njE0u)
 
 spring:
    data.mongodb:
       host: localhost
       port: 27017
       database: openopse
-      username: openopse
-   #   password: ope001
+      username: ENC(3HPLeMlzb4zsMwakDiOO5jkbnD+Wrqnn)
+   #   password: ENC(svm+31ZeLGwkwPbct5tInw==)
    
 openOpse:
     data: /home/amiere/Documents/data/
@@ -109,8 +109,8 @@ etc.python:
     
 
 sso:
-    login: arnaud.miere@obs-mip.fr
-    password: Miere22@r    
+    login: ENC(dSbUtoK5k2TE0p1YMZoxDia3+uUx2njw+ujxsOoVFyQ=)
+    password: ENC(l2Ogu+dMtAvH83QYCTDmDGZS6C2njE0u)
     
 
 spring:
@@ -118,5 +118,5 @@ spring:
       host: localhost
       port: 27017
       database: openopse
-      username: openopse
-      password: ope001
+      username: ENC(3HPLeMlzb4zsMwakDiOO5jkbnD+Wrqnn)
+      password: ENC(svm+31ZeLGwkwPbct5tInw==)
